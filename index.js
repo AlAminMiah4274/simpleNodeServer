@@ -19,9 +19,19 @@ const users = [
     { id: 3, name: 'Al Amin Chowdhury', email: 'alaminchowdhury4274@gmail.com' }
 ];
 
+// User: dbUser1
+// Password: oUsIZDG2z3Yj7I4m
+
 // to get data from server side
 app.get('/users', (req, res) => {
-    res.send(users);
+    if (req.query.name) {
+        const search = req.query.name;
+        const filtered = users.filter(usr => usr.name.toLowerCase().indexOf(search) >= 0);
+        res.send(filtered);
+    }
+    else {
+        res.send(users);
+    }
 });
 
 // to get data from client side

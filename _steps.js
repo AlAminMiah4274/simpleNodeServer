@@ -7,3 +7,10 @@ POST:
 5. Make sure to use JSON.stringify to send data. 
 6. Use express.json() as middleware 
 */
+
+/*
+MongoDB: 
+1. sign up mongoDB atlas
+2. dba User1
+3. Whitelist your ip address
+*/
