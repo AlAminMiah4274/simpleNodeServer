@@ -13,4 +13,6 @@ MongoDB:
 1. sign up mongoDB atlas
 2. dba User1
 3. Whitelist your ip address
+4. database> connect> show entire code 
+5. npm i mongodb
 */
