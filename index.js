@@ -24,26 +24,26 @@ const users = [
 // Password: oUsIZDG2z3Yj7I4m
 
 // to get data from server side
-app.get('/users', (req, res) => {
-    if (req.query.name) {
-        const search = req.query.name;
-        const filtered = users.filter(usr => usr.name.toLowerCase().indexOf(search) >= 0);
-        res.send(filtered);
-    }
-    else {
-        res.send(users);
-    }
-});
+// app.get('/users', (req, res) => {
+//     if (req.query.name) {
+//         const search = req.query.name;
+//         const filtered = users.filter(usr => usr.name.toLowerCase().indexOf(search) >= 0);
+//         res.send(filtered);
+//     }
+//     else {
+//         res.send(users);
+//     }
+// });
 
 // to get data from client side
-app.post('/users', (req, res) => {
-    console.log('Post API called');
-    const user = req.body;
-    user.id = users.length + 1;
-    users.push(user);
-    console.log(user);
-    res.send(user);
-});
+// app.post('/users', (req, res) => {
+//     console.log('Post API called');
+//     const user = req.body;
+//     user.id = users.length + 1;
+//     users.push(user);
+//     console.log(user);
+//     res.send(user);
+// });
 
 app.listen(port, () => {
     console.log('Simple node server runnig on port:', port);
@@ -61,16 +61,52 @@ const client = new MongoClient(uri, {
     }
 });
 
+
+// async function run() {
+//     try {
+//         const userCollection = client.db('simpleNode').collection('users');
+//         const user = { name: 'Al Amin Khan', email: 'alaminkhan4274@gmail.com' };
+
+//         // to get data from client side and to send data to the database
+//         app.post('/users', async (req, res) => {
+//             console.log('Post API called');
+//             const user = req.body;
+
+//             const result = await userCollection.insertOne(user);
+//             console.log(result);
+//             user.id = result.insertedId;
+//             res.send(user);
+//         });
+//     } finally {
+
+//     }
+// }
+// run().catch(console.dir);
+
+// extra code...
 async function run() {
     try {
-        // Connect the client to the server	(optional starting in v4.7)
-        await client.connect();
-        // Send a ping to confirm a successful connection
-        await client.db("simpleNode").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
+        const userCollection = client.db('simpleNode').collection('users');
+
+        // to send data to the client side from the database
+        app.get('/users', async (req, res) => {
+            const cursor = userCollection.find({});
+            const users = await cursor.toArray();
+            res.send(users);
+        });
+
+        // to add data to the database from the client side
+        app.post('/users', async (req, res) => {
+            const user = req.body;
+            const result = await userCollection.insertOne(user);
+            user._id = result.insertedId;
+            res.send(user);
+
+            console.log(result);
+        })
     } finally {
-        // Ensures that the client will close when you finish/error
-        await client.close();
+
     }
-}
-run().catch(console.dir);
+};
+
+run().catch((err) => console.err(err));
